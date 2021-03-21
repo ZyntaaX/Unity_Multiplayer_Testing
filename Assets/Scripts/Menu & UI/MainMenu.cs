@@ -30,11 +30,11 @@ public class MainMenu : NetworkBehaviour {
     }
 
     public void OnCreateLobbyButtonClicked() {
-
+        // TO-DO: Implement
     }
 
     public void OnJoinLobbyButtonClicked() {
-        
+        // TO-DO: Implement
     }
 
     public void Quit() {
