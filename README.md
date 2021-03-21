@@ -12,6 +12,6 @@
 Some commands used in Mirror for client/server calls:
 <ul>
   <li>[Command] - Client > Server</li>
-  <li>[ClientRPC] - Server > All Clients</li>
-  <li>[TargetRPC] - Server > Target Client</li>
+  <li>[ClientRpc] - Server > All Clients</li>
+  <li>[TargetRpc] - Server > Target Client</li>
 </ul>
