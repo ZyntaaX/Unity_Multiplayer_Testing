@@ -7,6 +7,9 @@
   <li>
     Using ParrelSync for testing (<a href="https://github.com/VeriorPies/ParrelSync">Check out</a>).
   </li>
+  <li>
+    Using Cinemachine for player camera controller.
+  </li>
 </ul>
 
 Some commands used in Mirror for client/server calls:
