@@ -17,7 +17,6 @@ public class MainMenu : NetworkBehaviour {
         for (int i = 0; i < menuHolders.Length; i++) {
             if (menuHolders[i].menuHolder.activeSelf) {
                 currentActiveMenuIndex = i;
-                Debug.Log($"Active menu: {menuHolders[i].name}");
             }
         }
     }
@@ -40,11 +39,19 @@ public class MainMenu : NetworkBehaviour {
 
     public void OnBackButtonClicked() {
         string currentMenu = menuHolders[currentActiveMenuIndex].name;
-        if (currentMenu == "Join Lobby Menu" || currentMenu == "Create Lobby Menu") {
+        if (currentMenu == "Join Lobby Menu" || currentMenu == "Create Lobby Menu" || currentMenu == "Game Lobby Menu") {
             GoToMenu("Play Menu");
         } else {
             GoToMenu("Main Menu");
         }
+    }
+
+    public void OnCreateGame() {
+        GoToMenu("Game Lobby Menu");
+    }
+
+    public void OnJoinGame() {
+        GoToMenu("Game Lobby Menu");
     }
 
     public void Quit() {
@@ -55,6 +62,7 @@ public class MainMenu : NetworkBehaviour {
         for (int i = 0; i < menuHolders.Length; i++) {
             if (menuHolders[i].name == name) {
                 menuHolders[i].menuHolder.SetActive(true);
+                currentActiveMenuIndex = i;
             } else {
                 menuHolders[i].menuHolder.SetActive(false);
             }
