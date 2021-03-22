@@ -6,54 +6,69 @@ using Mirror;
 
 public class MainMenu : NetworkBehaviour {
 
+    // Public
     [Header("Required Compontents")]
-    public GameObject mainMenuHolder;
-    public GameObject playMenuHolder;
-    public GameObject optionsMenuHolder;
-    public GameObject createLobbyMenuHolder;
-    public GameObject joinLobbyMenuHolder;
+    public MenuHolder[] menuHolders;
+
+    // Private
+    int currentActiveMenuIndex;
+
+    public void Awake() {
+        for (int i = 0; i < menuHolders.Length; i++) {
+            if (menuHolders[i].menuHolder.activeSelf) {
+                currentActiveMenuIndex = i;
+                Debug.Log($"Active menu: {menuHolders[i].name}");
+            }
+        }
+    }
 
     public void OnPlayButtonClicked() {
-        mainMenuHolder.SetActive(false);
-        optionsMenuHolder.SetActive(false);
-        createLobbyMenuHolder.SetActive(false);
-        joinLobbyMenuHolder.SetActive(false);
-        playMenuHolder.SetActive(true);
-    }
-
-    public void OnOptionsButtonClicked() {
-        mainMenuHolder.SetActive(false);
-        optionsMenuHolder.SetActive(true);
-        createLobbyMenuHolder.SetActive(false);
-        joinLobbyMenuHolder.SetActive(false);
-        playMenuHolder.SetActive(false);
-    }
-
-    public void OnBackButtonClicked() {
-        mainMenuHolder.SetActive(true);
-        optionsMenuHolder.SetActive(false);
-        playMenuHolder.SetActive(false);
-        createLobbyMenuHolder.SetActive(false);
-        joinLobbyMenuHolder.SetActive(false);
+        GoToMenu("Play Menu");
     }
 
     public void OnCreateLobbyButtonClicked() {
-        mainMenuHolder.SetActive(false);
-        optionsMenuHolder.SetActive(false);
-        playMenuHolder.SetActive(false);
-        createLobbyMenuHolder.SetActive(true);
-        joinLobbyMenuHolder.SetActive(false);
+        GoToMenu("Create Lobby Menu");
     }
 
     public void OnJoinLobbyButtonClicked() {
-        mainMenuHolder.SetActive(false);
-        optionsMenuHolder.SetActive(false);
-        playMenuHolder.SetActive(false);
-        createLobbyMenuHolder.SetActive(false);
-        joinLobbyMenuHolder.SetActive(true);
+        GoToMenu("Join Lobby Menu");
+    }
+
+    public void OnOptionsButtonClicked() {
+        GoToMenu("Options Menu");
+    }
+
+    public void OnBackButtonClicked() {
+        string currentMenu = menuHolders[currentActiveMenuIndex].name;
+        if (currentMenu == "Join Lobby Menu" || currentMenu == "Create Lobby Menu") {
+            GoToMenu("Play Menu");
+        } else {
+            GoToMenu("Main Menu");
+        }
     }
 
     public void Quit() {
         Application.Quit();
+    }
+
+    void GoToMenu(string name) {
+        for (int i = 0; i < menuHolders.Length; i++) {
+            if (menuHolders[i].name == name) {
+                menuHolders[i].menuHolder.SetActive(true);
+            } else {
+                menuHolders[i].menuHolder.SetActive(false);
+            }
+        }
+    }
+
+    [System.Serializable]
+    public struct MenuHolder {
+        public string name;
+        public GameObject menuHolder;
+
+        public MenuHolder(string _name, GameObject _menuHolder) {
+            name = _name;
+            menuHolder = _menuHolder;
+        }
     }
 }

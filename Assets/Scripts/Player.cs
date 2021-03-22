@@ -21,7 +21,7 @@ public class Player : NetworkBehaviour {
     int count = 0;
     */
 
-    float xRotation = 0f;
+    //float xRotation = 0f;
 
     void Start() {
         if (isLocalPlayer) {
