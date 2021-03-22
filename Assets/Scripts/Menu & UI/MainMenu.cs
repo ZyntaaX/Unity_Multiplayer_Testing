@@ -10,16 +10,22 @@ public class MainMenu : NetworkBehaviour {
     public GameObject mainMenuHolder;
     public GameObject playMenuHolder;
     public GameObject optionsMenuHolder;
+    public GameObject createLobbyMenuHolder;
+    public GameObject joinLobbyMenuHolder;
 
     public void OnPlayButtonClicked() {
         mainMenuHolder.SetActive(false);
         optionsMenuHolder.SetActive(false);
+        createLobbyMenuHolder.SetActive(false);
+        joinLobbyMenuHolder.SetActive(false);
         playMenuHolder.SetActive(true);
     }
 
     public void OnOptionsButtonClicked() {
         mainMenuHolder.SetActive(false);
         optionsMenuHolder.SetActive(true);
+        createLobbyMenuHolder.SetActive(false);
+        joinLobbyMenuHolder.SetActive(false);
         playMenuHolder.SetActive(false);
     }
 
@@ -27,14 +33,24 @@ public class MainMenu : NetworkBehaviour {
         mainMenuHolder.SetActive(true);
         optionsMenuHolder.SetActive(false);
         playMenuHolder.SetActive(false);
+        createLobbyMenuHolder.SetActive(false);
+        joinLobbyMenuHolder.SetActive(false);
     }
 
     public void OnCreateLobbyButtonClicked() {
-        // TO-DO: Implement
+        mainMenuHolder.SetActive(false);
+        optionsMenuHolder.SetActive(false);
+        playMenuHolder.SetActive(false);
+        createLobbyMenuHolder.SetActive(true);
+        joinLobbyMenuHolder.SetActive(false);
     }
 
     public void OnJoinLobbyButtonClicked() {
-        // TO-DO: Implement
+        mainMenuHolder.SetActive(false);
+        optionsMenuHolder.SetActive(false);
+        playMenuHolder.SetActive(false);
+        createLobbyMenuHolder.SetActive(false);
+        joinLobbyMenuHolder.SetActive(true);
     }
 
     public void Quit() {
