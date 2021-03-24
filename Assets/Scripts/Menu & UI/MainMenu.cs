@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using TMPro;
 
 public class MainMenu : NetworkBehaviour {
 
@@ -58,7 +59,7 @@ public class MainMenu : NetworkBehaviour {
         Application.Quit();
     }
 
-    void GoToMenu(string name) {
+    public void GoToMenu(string name) {
         for (int i = 0; i < menuHolders.Length; i++) {
             if (menuHolders[i].name == name) {
                 menuHolders[i].menuHolder.SetActive(true);
