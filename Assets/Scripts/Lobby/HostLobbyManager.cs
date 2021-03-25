@@ -1,33 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Mirror;
+using UnityEngine.UI;
 
 public class HostLobbyManager : MonoBehaviour {
 
     // Public
     [Header("Required Components")]
-    [SerializeField] private MyNetworkManager networkManager = null;
-    [SerializeField] private MainMenu menuManager = null;
-
     [SerializeField] private InputField displayNameInputField = null;
-    [SerializeField] private Button createButton = null;
+    [SerializeField] private Button createLobbyButton = null;
+    [SerializeField] private MenuManager menuManager = null;
+    [SerializeField] private LobbyNetworkManager networkManager = null;
+    [SerializeField] private Text ipAdressNotification = null;
 
     // Private
     private string displayName = null;
-    private string PlayerPrefNameKey = "PlayerPrefName";
 
     void Start() {
         DisplayNameSetup();
+        ipAdressNotification.enabled = false;
     }
 
-    void Update()
-    {
-        if (string.IsNullOrEmpty(displayNameInputField.text))
-            createButton.interactable = false;
-        else 
-            createButton.interactable = true;
+    void Update() {
+        if (string.IsNullOrEmpty(displayNameInputField.text)) {
+            createLobbyButton.interactable = false;
+        } else {
+            createLobbyButton.interactable = true;
+        }
     }
 
     public void HostLobby() {
@@ -35,37 +35,38 @@ public class HostLobbyManager : MonoBehaviour {
         if (DisplayNameAccepted(displayName)) {
             SaveName(displayName);
 
-            menuManager.GoToMenu("Host Game Lobby Menu");
+            Debug.Log($"Hosting a lobby on IP: {networkManager.networkAddress}");
 
-            Debug.Log($"Created Lobby on IP {networkManager.networkAddress}");
+            menuManager.NavigateToMenu("Lobby");
             networkManager.StartHost();
+
+            ipAdressNotification.enabled = true;
+            ipAdressNotification.text = "IP - Adress: " + networkManager.networkAddress;
         }
     }
 
     public void CloseLobby() {
-        Debug.Log("Closing Lobby");
-
-        menuManager.GoToMenu("Play Menu");
-
         networkManager.StopHost();
+
+        menuManager.NavigateToMenu("Play Menu");
     }
 
-    private void DisplayNameSetup() {
-        if (PlayerPrefs.HasKey(PlayerPrefNameKey)) {
-            displayName = PlayerPrefs.GetString(PlayerPrefNameKey);
+    void DisplayNameSetup() {
+        if (PlayerPrefs.HasKey(PlayerPrefStrings.playerDisplayNamePref)) {
+            displayName = PlayerPrefs.GetString(PlayerPrefStrings.playerDisplayNamePref);
             displayNameInputField.text = displayName;
         }
     }
 
-    private bool DisplayNameAccepted(string name) {
+    bool DisplayNameAccepted(string name) {
         if (string.IsNullOrEmpty(name))
             return false;
 
         return true;
     }
 
-    private void SaveName(string name) {
-        PlayerPrefs.SetString(PlayerPrefNameKey, name);
+    void SaveName(string name) {
+        PlayerPrefs.SetString(PlayerPrefStrings.playerDisplayNamePref, name);
         PlayerPrefs.Save();
     }
 }

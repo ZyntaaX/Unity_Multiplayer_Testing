@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour {
 
-    [SerializeField] private NewJoinLobbyManager joinLobbyManager = null;
+    [SerializeField] private JoinLobbyManager joinLobbyManager = null;
     [System.Serializable]
     public struct MenuHolder {
         public string name;

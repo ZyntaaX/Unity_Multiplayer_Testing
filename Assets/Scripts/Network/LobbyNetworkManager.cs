@@ -5,7 +5,7 @@ using Mirror;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MyNewNetworkManager : NetworkManager {
+public class LobbyNetworkManager : NetworkManager {
     // Public
     [Header("Lobby Settings")]
     [SerializeField] private int minimumPlayers = 2;

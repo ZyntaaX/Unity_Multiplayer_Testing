@@ -32,14 +32,14 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
     }
 
     // Creates a singleton of the lobby
-    private MyNewNetworkManager lobby;
-    public MyNewNetworkManager Lobby {
+    private LobbyNetworkManager lobby;
+    public LobbyNetworkManager Lobby {
         get {
             if (lobby != null) {
                 return lobby;
             }
 
-            return lobby = MyNewNetworkManager.singleton as MyNewNetworkManager;
+            return lobby = LobbyNetworkManager.singleton as LobbyNetworkManager;
         }
     }
 
