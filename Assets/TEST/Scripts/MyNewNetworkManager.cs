@@ -13,7 +13,7 @@ public class MyNewNetworkManager : NetworkManager {
     [Header("Lobby Objects")]
     [SerializeField] private LobbyPlayerPrefab lobbyPlayerPrefab = null;
     [Scene] [SerializeField] private string menuScene = string.Empty;
-  
+
     public static event System.Action OnClientConnected;
     public static event System.Action OnClientDisconnected;
 
@@ -24,8 +24,6 @@ public class MyNewNetworkManager : NetworkManager {
     }
     public override void OnStartClient() {
         // Load all spawnable prefabs
-
-
     }
 
     public override void OnClientConnect(NetworkConnection conn) {
@@ -41,8 +39,6 @@ public class MyNewNetworkManager : NetworkManager {
     }
 
     public override void OnServerConnect(NetworkConnection conn) {
-        //base.OnServerConnect(conn);
-
         if (numPlayers >= maxConnections) {
             conn.Disconnect();
             return;
@@ -55,20 +51,49 @@ public class MyNewNetworkManager : NetworkManager {
     }
 
     public override void OnServerDisconnect(NetworkConnection conn) {
-        base.OnServerDisconnect(conn);
+        if (conn.identity != null) {
+            var player = conn.identity.GetComponent<LobbyPlayerPrefab>();
 
-        // For lobby 
+            LobbyPlayers.Remove(player);
+
+            NotifyPlayersOfReadyState();
+        }
+
+        base.OnServerDisconnect(conn);
+    }
+
+    public void NotifyPlayersOfReadyState() {
+        foreach (var player in LobbyPlayers) {
+            player.HandleReadyToStart(IsReadyToStart());
+        }
+    }
+
+    private bool IsReadyToStart() {
+        if (numPlayers < minimumPlayers) {
+            return false;
+        }
+
+        foreach (var player in LobbyPlayers) {
+            if (!player.IsReady) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public override void OnServerAddPlayer(NetworkConnection conn) {
-        //base.OnServerAddPlayer(conn);
-
         if (SceneManager.GetActiveScene().path == menuScene) {
             LobbyPlayerPrefab lobbyPlayerInstance = Instantiate(lobbyPlayerPrefab);
 
+            bool isLeader = LobbyPlayers.Count == 0; // If first player in lobby
+            lobbyPlayerInstance.IsLeader = isLeader;
 
-            Debug.Log("Adding player");
             NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
         }
+    }
+
+    public override void OnStopServer() {
+        LobbyPlayers.Clear();
     }
 }

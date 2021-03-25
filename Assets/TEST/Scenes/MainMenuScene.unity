@@ -2569,7 +2569,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 2743859231543418500, guid: fde1b013b18840348af9e0b7e2929438, type: 3}
-  minimumPlayers: 2
+  minimumPlayers: 1
   lobbyPlayerPrefab: {fileID: 5638597895830302386, guid: fde1b013b18840348af9e0b7e2929438, type: 3}
   menuScene: Assets/TEST/Scenes/MainMenuScene.unity
 --- !u!114 &1141450117
@@ -3713,6 +3713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1590941d008fe54385ab45212d616ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  joinLobbyManager: {fileID: 1252737193}
   menuHolders:
   - name: Landing Page
     holder: {fileID: 1606007307}

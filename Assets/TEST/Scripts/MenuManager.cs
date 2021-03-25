@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour {
 
+    [SerializeField] private NewJoinLobbyManager joinLobbyManager = null;
     [System.Serializable]
     public struct MenuHolder {
         public string name;
@@ -29,6 +30,10 @@ public class MenuManager : MonoBehaviour {
                 currentActiveHolderIndex = i;
             }
         }
+    }
+
+    private void Start() {
+        Screen.fullScreen = false;
     }
 
     // Update is called once per frame
@@ -59,10 +64,15 @@ public class MenuManager : MonoBehaviour {
     public void BackButtonClicked() {
         string currentMenu = menuHolders[currentActiveHolderIndex].name;
         if (currentMenu == "Create Lobby" || currentMenu == "Join Lobby") {
+            if (currentMenu == "Join Lobby") {
+                joinLobbyManager.ClearErrorMessage();
+            }
             NavigateToMenu("Play Menu");
-        } else {
-            NavigateToMenu("Landing Page");
+            return;
         }
+
+        NavigateToMenu("Landing Page");
+
     }
 
     public void NavigateToMenu(string menuName) {

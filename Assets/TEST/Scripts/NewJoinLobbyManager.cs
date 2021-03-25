@@ -16,7 +16,6 @@ public class NewJoinLobbyManager : MonoBehaviour {
     [SerializeField] private Button joinLobbyButton = null;
 
     // Private
-    private const string PlayerPrefNameKey = "PlayerPrefName";
     private string displayName = null;
 
     void Start() {
@@ -69,7 +68,9 @@ public class NewJoinLobbyManager : MonoBehaviour {
 
             joinLobbyButton.interactable = false;
             networkManager.networkAddress = ipAdressInputField.text;
+
             networkManager.StartClient();
+ 
 
             SetErrorMessage("Connecting...", Color.yellow);
         } else {
@@ -94,8 +95,8 @@ public class NewJoinLobbyManager : MonoBehaviour {
     }
 
     void DisplayNameSetup() {
-        if (PlayerPrefs.HasKey(PlayerPrefNameKey)) {
-            displayName = PlayerPrefs.GetString(PlayerPrefNameKey);
+        if (PlayerPrefs.HasKey(PlayerPrefStrings.playerDisplayNamePref)) {
+            displayName = PlayerPrefs.GetString(PlayerPrefStrings.playerDisplayNamePref);
             displayNameInputField.text = displayName;
         }
     }
@@ -108,7 +109,7 @@ public class NewJoinLobbyManager : MonoBehaviour {
     }
 
     void SaveName(string name) {
-        PlayerPrefs.SetString(PlayerPrefNameKey, name);
+        PlayerPrefs.SetString(PlayerPrefStrings.playerDisplayNamePref, name);
         PlayerPrefs.Save();
     }
 }

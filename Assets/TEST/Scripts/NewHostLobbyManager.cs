@@ -15,7 +15,6 @@ public class NewHostLobbyManager : MonoBehaviour {
     [SerializeField] private Text ipAdressNotification = null;
 
     // Private
-    private const string PlayerPrefNameKey = "PlayerPrefName";
     private string displayName = null;
 
     void Start() {
@@ -53,8 +52,8 @@ public class NewHostLobbyManager : MonoBehaviour {
     }
 
     void DisplayNameSetup() {
-        if (PlayerPrefs.HasKey(PlayerPrefNameKey)) {
-            displayName = PlayerPrefs.GetString(PlayerPrefNameKey);
+        if (PlayerPrefs.HasKey(PlayerPrefStrings.playerDisplayNamePref)) {
+            displayName = PlayerPrefs.GetString(PlayerPrefStrings.playerDisplayNamePref);
             displayNameInputField.text = displayName;
         }
     }
@@ -67,7 +66,7 @@ public class NewHostLobbyManager : MonoBehaviour {
     }
 
     void SaveName(string name) {
-        PlayerPrefs.SetString(PlayerPrefNameKey, name);
+        PlayerPrefs.SetString(PlayerPrefStrings.playerDisplayNamePref, name);
         PlayerPrefs.Save();
     }
 }
