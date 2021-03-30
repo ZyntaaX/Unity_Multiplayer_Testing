@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour {
 
     [SerializeField] private Text errorText = null;
+    [SerializeField] private GameObject loadingText = null;
+
     [System.Serializable]
     public struct MenuHolder {
         public string name;
@@ -33,12 +35,16 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    private void Start() {
-        Screen.fullScreen = false;
-    }
-
     public void Quit() {
         Application.Quit();
+    }
+
+    public void DisplayLoading() {
+        loadingText.SetActive(true);
+    }
+
+    public void HideLoading() {
+        loadingText.SetActive(false);
     }
 
     public void NavigateToMenu(string menuName) {

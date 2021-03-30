@@ -27,6 +27,8 @@ public class LobbyNetworkManager : NetworkManager {
     }
 
     public override void OnClientConnect(NetworkConnection conn) {
+
+        NotifyPlayersOfReadyState();
         base.OnClientConnect(conn);
 
         OnClientConnected?.Invoke();
@@ -90,6 +92,8 @@ public class LobbyNetworkManager : NetworkManager {
             lobbyPlayerInstance.IsLeader = isLeader;
 
             NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
+
+            NotifyPlayersOfReadyState();
         }
     }
 

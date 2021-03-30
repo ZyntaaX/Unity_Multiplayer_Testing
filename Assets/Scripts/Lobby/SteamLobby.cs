@@ -18,6 +18,8 @@ public class SteamLobby : MonoBehaviour {
     protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
     protected Callback<LobbyEnter_t> lobbyEntered;
 
+    public static CSteamID LobbyID { get; private set; }
+
     void Start() {
         networkManager = GetComponent<LobbyNetworkManager>();
 
@@ -43,21 +45,24 @@ public class SteamLobby : MonoBehaviour {
 
     private void OnLobbyCreated(LobbyCreated_t callback) {
         if (callback.m_eResult != EResult.k_EResultOK) {
-            menuManager.NavigateToMenu("Landing");
             return;
         }
 
-        menuManager.NavigateToMenu("Lobby");
+        LobbyID = new CSteamID(callback.m_ulSteamIDLobby);
+
         networkManager.StartHost();
-        
+        menuManager.NavigateToMenu("Lobby");
+        menuManager.HideLoading();
+
         SteamMatchmaking.SetLobbyData(
-            new CSteamID(callback.m_ulSteamIDLobby), 
+            LobbyID, 
             HostAdressKey,
             SteamUser.GetSteamID().ToString());
     }
 
     private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback) {
         menuManager.NavigateToMenu("Loading");
+        menuManager.DisplayLoading();
         SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
     }
 
@@ -76,8 +81,7 @@ public class SteamLobby : MonoBehaviour {
 
     public void LeaveLobby() {
         networkManager.StopHost();
-
+        menuManager.DisplayLoading();
         menuManager.NavigateToMenu("Landing");
     }
-
 }

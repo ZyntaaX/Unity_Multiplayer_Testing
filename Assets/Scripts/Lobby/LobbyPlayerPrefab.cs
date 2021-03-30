@@ -23,12 +23,24 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
 
     // Private
     private LobbyNetworkManager networkManager;
+    private MenuManager menuManager;
 
     private bool isLeader;
     public bool IsLeader {
         set {
             isLeader = value;
             startGameButton.gameObject.SetActive(value);
+        }
+    }
+
+    private uint userSteamID;
+    public uint UserSteamID {
+        set {
+            userSteamID = value;
+        }
+        
+        get {
+            return userSteamID;
         }
     }
 
@@ -46,6 +58,8 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
 
     void Start() {
         networkManager = FindObjectOfType<LobbyNetworkManager>();
+        menuManager = FindObjectOfType<MenuManager>();
+        menuManager.HideLoading();
     }
 
     public override void OnStartAuthority() {
@@ -54,18 +68,21 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
         for (int i = 0; i < playerNames.Length; i++) {
             playerNames[i].color = Color.grey;
         }
-
-        lobbyUI.SetActive(true);
+        if (hasAuthority) {
+            lobbyUI.SetActive(true);
+        }
     }
 
     public override void OnStartClient() {
         Lobby.LobbyPlayers.Add(this);
-
         UpdateDisplay();
     }
 
     public override void OnStopClient() {
         Lobby.LobbyPlayers.Remove(this);
+
+        if (hasAuthority)
+            menuManager.NavigateToMenu("Error", "<color=red>Disconnected!</color>");
 
         UpdateDisplay();
     }

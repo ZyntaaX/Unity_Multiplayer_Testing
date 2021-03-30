@@ -11,8 +11,12 @@ public class NetworkMessages : MonoBehaviour {
         NetworkClient.RegisterHandler<Notification>(OnNotificationRecieved);
     }
 
+    public void ClearNotification() {
+        notificationsText.text = string.Empty;
+    }
+
     private void OnNotificationRecieved(Notification msg) {
-        notificationsText.text += $"\n{msg.content}";
+        notificationsText.text = $"\n{msg.content}";
     }
 }
 
