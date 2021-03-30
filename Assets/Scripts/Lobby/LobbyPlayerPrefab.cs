@@ -8,11 +8,10 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
     // Public
     [Header("Required Compontents")]
     [SerializeField] private GameObject lobbyUI = null;
-    [SerializeField] private Text[] playerReadytexts = null;
     [SerializeField] private Text[] playerNames = null;
-    //[SerializeField] private Button readybutton = null;
+    [SerializeField] private Text[] playerReadytexts = null;
+    [SerializeField] private RawImage[] UserImages = null; // For use later
     [SerializeField] private Button startGameButton = null;
-    //[SerializeField] private Image lobbyLeaderSymbol = null;
 
     [SyncVar(hook = nameof(HandleDisplayNameChanged))]
     public string DisplayName = "Loading...";
@@ -23,6 +22,8 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
     public void HandleDisplayNameChanged(string oldValue, string newValue) => UpdateDisplay();
 
     // Private
+    private LobbyNetworkManager networkManager;
+
     private bool isLeader;
     public bool IsLeader {
         set {
@@ -41,6 +42,10 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
 
             return lobby = LobbyNetworkManager.singleton as LobbyNetworkManager;
         }
+    }
+
+    void Start() {
+        networkManager = FindObjectOfType<LobbyNetworkManager>();
     }
 
     public override void OnStartAuthority() {
@@ -122,5 +127,6 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
 
         //Start Game
         Debug.Log("Starting Game...");
+        networkManager.SendGameStartNotice();
     }
 }

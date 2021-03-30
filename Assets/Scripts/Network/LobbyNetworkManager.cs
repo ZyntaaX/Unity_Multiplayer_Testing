@@ -96,4 +96,33 @@ public class LobbyNetworkManager : NetworkManager {
     public override void OnStopServer() {
         LobbyPlayers.Clear();
     }
+
+    // - - - - - - - SERVER NOTIFICATIONS - - - - - - - -
+
+    [SerializeField] private string notificationMessage = string.Empty;
+
+    [ContextMenu("Send Notification")]
+    private void SendNotification() {
+        NetworkServer.SendToAll(new Notification { content = notificationMessage });
+    }
+
+    public void SendGameStartNotice() {
+        StopCoroutine("StartGameCountdown");
+        StartCoroutine("StartGameCountdown");
+    }
+
+    private IEnumerator StartGameCountdown() {
+        int i = 4;
+        string _content = string.Empty;
+        while (i > 0) {
+            if (i > 1) {
+                _content = $"Game starts in {(i - 1)}...";
+            } else {
+                _content = "Game starting...";
+            }
+            NetworkServer.SendToAll(new Notification { content = _content });
+            yield return new WaitForSeconds(1);
+            i--;
+        }
+    }
 }
