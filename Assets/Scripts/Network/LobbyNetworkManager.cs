@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class LobbyNetworkManager : NetworkManager {
     // Public
@@ -27,14 +28,16 @@ public class LobbyNetworkManager : NetworkManager {
     }
 
     public override void OnClientConnect(NetworkConnection conn) {
-
         NotifyPlayersOfReadyState();
+
         base.OnClientConnect(conn);
 
         OnClientConnected?.Invoke();
     }
 
     public override void OnClientDisconnect(NetworkConnection conn) {
+        NotifyPlayersOfReadyState(); // WORKS?
+
         base.OnClientDisconnect(conn);
 
         OnClientDisconnected?.Invoke();

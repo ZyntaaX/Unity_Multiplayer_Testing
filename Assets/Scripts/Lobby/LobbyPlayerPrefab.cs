@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
+using Steamworks;
 
 public class LobbyPlayerPrefab : NetworkBehaviour {
     // Public
@@ -17,9 +18,20 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
     public string DisplayName = "Loading...";
     [SyncVar(hook = nameof(HandleReadyStatusChanged))]
     public bool IsReady = false;
+    [SyncVar(hook = nameof(HandleSteamIDChanged))]
+    private CSteamID userSteamID;
+    public CSteamID UserSteamID {
+        set {
+            userSteamID = value;
+        }
+        get {
+            return userSteamID;
+        }
+    }
 
     public void HandleReadyStatusChanged(bool oldValue, bool newValue) => UpdateDisplay();
     public void HandleDisplayNameChanged(string oldValue, string newValue) => UpdateDisplay();
+    public void HandleSteamIDChanged(CSteamID oldSteamId, CSteamID newSteamId) => UpdateDisplay();
 
     // Private
     private LobbyNetworkManager networkManager;
@@ -30,17 +42,6 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
         set {
             isLeader = value;
             startGameButton.gameObject.SetActive(value);
-        }
-    }
-
-    private uint userSteamID;
-    public uint UserSteamID {
-        set {
-            userSteamID = value;
-        }
-        
-        get {
-            return userSteamID;
         }
     }
 
@@ -62,14 +63,20 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
         menuManager.HideLoading();
     }
 
+    private void Update() {
+        UpdateDisplay();
+    }
+
     public override void OnStartAuthority() {
-        CmdSetDisplayName(PlayerPrefs.GetString(PlayerPrefStrings.playerDisplayNamePref));
+        CmdSetDisplayName(SteamFriends.GetFriendPersonaName(this.UserSteamID));
+        CmdSetSteamID(SteamUser.GetSteamID());
 
         for (int i = 0; i < playerNames.Length; i++) {
             playerNames[i].color = Color.grey;
         }
         if (hasAuthority) {
             lobbyUI.SetActive(true);
+
         }
     }
 
@@ -101,15 +108,33 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
         }
 
         // Updates the lobby UI
+
+        // Resets player names
         for (int i = 0; i < playerNames.Length; i++) {
             playerReadytexts[i].text = string.Empty;
             playerNames[i].color = Color.grey;
             playerNames[i].text = "Waiting For Player...";
         }
 
+        // Resets player display images
+        //for (int i = 0; i <)
+
+
         for (int i = 0; i < Lobby.LobbyPlayers.Count; i++) {
-            playerNames[i].text = Lobby.LobbyPlayers[i].DisplayName;
-            playerNames[i].color = Color.white;
+            // Player Names
+            playerNames[i].text = SteamFriends.GetFriendPersonaName(Lobby.LobbyPlayers[i].UserSteamID);
+            if (Lobby.LobbyPlayers[i].UserSteamID == this.UserSteamID) {
+                playerNames[i].color = Color.yellow;
+            } else {
+                playerNames[i].color = Color.white;
+            }
+            /* 
+            // Extra indication of who the player is in lobby
+            if (Lobby.LobbyPlayers[i].UserSteamID == this.UserSteamID) {
+                playerNames[i].text += "(you)";
+            } */
+
+            // Player Ready Text
             playerReadytexts[i].text = Lobby.LobbyPlayers[i].IsReady ?
                     "<color=green>Ready</color>" :
                     "<color=red>Not Ready</color>";
@@ -126,6 +151,11 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
     [Command]
     private void CmdSetDisplayName(string displayName) {
         DisplayName = displayName;
+    }
+
+    [Command]
+    private void CmdSetSteamID(CSteamID id) {
+        UserSteamID = id;
     }
 
     [Command]

@@ -1062,13 +1062,7 @@ MonoBehaviour:
   - {fileID: 2414348947541798930}
   - {fileID: 2022951775433568942}
   - {fileID: 6582532109974965473}
-  UserImages:
-  - {fileID: 5333640134753908530}
-  - {fileID: 8220788857936906440}
-  - {fileID: 383684951497344346}
-  - {fileID: 6549284660276598843}
-  - {fileID: 3065177226621150738}
-  - {fileID: 8346381357823326851}
+  UserImages: []
   startGameButton: {fileID: 8212056637090265214}
   DisplayName: Loading...
   IsReady: 0
