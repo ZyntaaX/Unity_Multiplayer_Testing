@@ -6,12 +6,19 @@ using UnityEngine.UI;
 using Steamworks;
 
 public class LobbyPlayerPrefab : NetworkBehaviour {
+
+
+    protected Callback<AvatarImageLoaded_t> avatarImageLoaded;
+
+
+
+
     // Public
     [Header("Required Compontents")]
     [SerializeField] private GameObject lobbyUI = null;
     [SerializeField] private Text[] playerNames = null;
     [SerializeField] private Text[] playerReadytexts = null;
-    [SerializeField] private RawImage[] UserImages = null; // For use later
+    [SerializeField] private RawImage[] userImages = null; // For use later
     [SerializeField] private Button startGameButton = null;
 
     [SyncVar(hook = nameof(HandleDisplayNameChanged))]
@@ -83,6 +90,8 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
     public override void OnStartClient() {
         Lobby.LobbyPlayers.Add(this);
         UpdateDisplay();
+
+        avatarImageLoaded = Callback<AvatarImageLoaded_t>.Create(OnAvatarImageLoaded);
     }
 
     public override void OnStopClient() {
@@ -117,7 +126,11 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
         }
 
         // Resets player display images
-        //for (int i = 0; i <)
+        for (int i = 0; i < userImages.Length; i++) {
+            Color grey = new Color(.2f, .2f, .2f, 1f); // Dark-grey
+            userImages[i].color = Color.black;
+            userImages[i].texture = null;
+        }
 
 
         for (int i = 0; i < Lobby.LobbyPlayers.Count; i++) {
@@ -138,6 +151,44 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
             playerReadytexts[i].text = Lobby.LobbyPlayers[i].IsReady ?
                     "<color=green>Ready</color>" :
                     "<color=red>Not Ready</color>";
+
+            // Player Images
+            userImages[i].color = Color.white;
+
+            int imageId = SteamFriends.GetLargeFriendAvatar(Lobby.LobbyPlayers[i].UserSteamID);
+
+            if (imageId == -1) { return; }
+
+            userImages[i].texture = GetSteamImageAsTexture2D(imageId);
+        }
+    }
+
+    private Texture2D GetSteamImageAsTexture2D(int iImage) {
+        Texture2D texture = null;
+
+        bool isValid = SteamUtils.GetImageSize(iImage, out uint width, out uint height);
+
+        if (isValid) {
+            uint bufferSize = width * height * 4; // 4 to get 4 bits per pixel (RGBA)
+
+            byte[] image = new byte[bufferSize];
+
+            isValid = SteamUtils.GetImageRGBA(iImage, image, (int)bufferSize);
+
+            if (isValid) {
+                texture = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false, true);
+                texture.LoadRawTextureData(image);
+                texture.Apply();
+            }
+        }
+
+        return texture;
+    }
+
+    private void OnAvatarImageLoaded(AvatarImageLoaded_t callback) {
+        for (int i = 0; i < Lobby.LobbyPlayers.Count; i++) {
+            if (callback.m_steamID != Lobby.LobbyPlayers[i].UserSteamID) { return; }
+            userImages[i].texture = GetSteamImageAsTexture2D(callback.m_iImage);
         }
     }
 
