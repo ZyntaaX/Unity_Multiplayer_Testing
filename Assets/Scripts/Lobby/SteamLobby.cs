@@ -80,8 +80,13 @@ public class SteamLobby : MonoBehaviour {
     }
 
     public void LeaveLobby() {
+        SteamMatchmaking.LeaveLobby(LobbyID);
+
+        networkManager.StopServer();
+
         networkManager.StopHost();
         menuManager.DisplayLoading();
         menuManager.NavigateToMenu("Landing");
+        
     }
 }

@@ -7,12 +7,6 @@ using Steamworks;
 
 public class LobbyPlayerPrefab : NetworkBehaviour {
 
-
-    protected Callback<AvatarImageLoaded_t> avatarImageLoaded;
-
-
-
-
     // Public
     [Header("Required Compontents")]
     [SerializeField] private GameObject lobbyUI = null;
@@ -63,6 +57,9 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
             return lobby = LobbyNetworkManager.singleton as LobbyNetworkManager;
         }
     }
+
+    // Steam Callbacks
+    protected Callback<AvatarImageLoaded_t> avatarImageLoaded;
 
     void Start() {
         networkManager = FindObjectOfType<LobbyNetworkManager>();
@@ -131,7 +128,6 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
             userImages[i].color = Color.black;
             userImages[i].texture = null;
         }
-
 
         for (int i = 0; i < Lobby.LobbyPlayers.Count; i++) {
             // Player Names

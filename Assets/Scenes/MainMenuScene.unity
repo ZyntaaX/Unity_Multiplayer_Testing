@@ -563,7 +563,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Escape Them!
+  m_Text: Project Mirror&SW
 --- !u!222 &232657386
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3979,7 +3979,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Release 0.0.1_p-a
+  m_Text: Release 0.0.2_p-a
 --- !u!222 &1988612637
 CanvasRenderer:
   m_ObjectHideFlags: 0
