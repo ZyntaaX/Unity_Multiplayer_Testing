@@ -13,6 +13,11 @@ public class LobbyNetworkManager : NetworkManager {
 
     [Header("Lobby Objects")]
     [SerializeField] private LobbyPlayerPrefab lobbyPlayerPrefab = null;
+
+    /*[Header("Game Objects")]
+    [SerializeField] private GamePlayerPrefab gamePlayerPrefab = null;*/
+
+    [Header("Scenes")]
     [Scene] [SerializeField] private string menuScene = string.Empty;
 
     public static event System.Action OnClientConnected;
