@@ -221,6 +221,7 @@ public class LobbyPlayerPrefab : NetworkBehaviour {
 
         //Start Game
         Debug.Log("Starting Game...");
-        networkManager.SendGameStartNotice();
+        Lobby.StartGame();
+        //networkManager.SendGameStartNotice();
     }
 }

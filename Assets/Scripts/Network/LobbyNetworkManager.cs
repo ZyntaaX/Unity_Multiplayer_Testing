@@ -11,11 +11,11 @@ public class LobbyNetworkManager : NetworkManager {
     [Header("Lobby Settings")]
     [SerializeField] private int minimumPlayers = 2;
 
-    [Header("Lobby Objects")]
+    [Header("Lobby")]
     [SerializeField] private LobbyPlayerPrefab lobbyPlayerPrefab = null;
 
-    /*[Header("Game Objects")]
-    [SerializeField] private GamePlayerPrefab gamePlayerPrefab = null;*/
+    [Header("Game")]
+    [SerializeField] private GamePlayerPrefab gamePlayerPrefab = null;
 
     [Header("Scenes")]
     [Scene] [SerializeField] private string menuScene = string.Empty;
@@ -24,6 +24,9 @@ public class LobbyNetworkManager : NetworkManager {
     public static event System.Action OnClientDisconnected;
 
     public List<LobbyPlayerPrefab> LobbyPlayers { get; } = new List<LobbyPlayerPrefab>();
+    public List<GamePlayerPrefab> GamePlayers { get; } = new List<GamePlayerPrefab>();
+
+    // - - - - - - - LOBBY - - - - - - - -
 
     public override void OnStartServer() {
         //spawnPrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList();
@@ -41,7 +44,7 @@ public class LobbyNetworkManager : NetworkManager {
     }
 
     public override void OnClientDisconnect(NetworkConnection conn) {
-        NotifyPlayersOfReadyState(); // WORKS?
+        NotifyPlayersOfReadyState();
 
         base.OnClientDisconnect(conn);
 
@@ -118,23 +121,55 @@ public class LobbyNetworkManager : NetworkManager {
         NetworkServer.SendToAll(new Notification { content = notificationMessage });
     }
 
-    public void SendGameStartNotice() {
-        StopCoroutine("StartGameCountdown");
-        StartCoroutine("StartGameCountdown");
+    // - - - - - - - GAME - - - - - - - -
+
+    public void StartGame() {
+        if (SceneManager.GetActiveScene().path == menuScene) {
+            if (!IsReadyToStart()) { return; }
+
+            StopCoroutine("StartGameCoroutine");
+            StartCoroutine("StartGameCoroutine");
+        }
     }
 
-    private IEnumerator StartGameCountdown() {
+    private IEnumerator StartGameCoroutine() {
         int i = 4;
         string _content = string.Empty;
         while (i > 0) {
-            if (i > 1) {
-                _content = $"Game starts in {(i - 1)}...";
+            if (IsReadyToStart()) {
+                if (i > 1) {
+                    _content = $"Game starts in {(i - 1)}...";
+                } else {
+                    _content = "<color=yellow>Game is about to start...</color>";
+                }
+
+                NetworkServer.SendToAll(new Notification { content = _content });
+                yield return new WaitForSeconds(1);
+                i--;
             } else {
-                _content = "Game starting...";
+                NetworkServer.SendToAll(new Notification { content = "<color=red>Cancelled</color>" });
+                break;
             }
-            NetworkServer.SendToAll(new Notification { content = _content });
-            yield return new WaitForSeconds(1);
-            i--;
         }
+
+        if (IsReadyToStart()) { ServerChangeScene("Scene_Map_01"); }
+    }
+
+    public override void ServerChangeScene(string newSceneName) {
+        // From menu to game
+        if (SceneManager.GetActiveScene().path == menuScene && newSceneName.StartsWith("Scene_Map")) {
+            for (int i = LobbyPlayers.Count - 1; i >= 0; i--) {
+                var conn = LobbyPlayers[i].connectionToClient;
+                var gamePlayerInstance = Instantiate(gamePlayerPrefab);
+                gamePlayerInstance.UserSteamID = LobbyPlayers[i].UserSteamID;
+                Debug.Log($"Check steamID, (not 0?): {LobbyPlayers[i].UserSteamID}");
+
+                NetworkServer.Destroy(conn.identity.gameObject);
+
+                NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject);
+            }
+        }
+
+        base.ServerChangeScene(newSceneName);
     }
 }
