@@ -4,20 +4,29 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class LobbyNetworkManager : NetworkManager {
     // Public
     [Header("Lobby Settings")]
     [SerializeField] private int minimumPlayers = 2;
 
-    [Header("Lobby Objects")]
+    [Header("Lobby")]
     [SerializeField] private LobbyPlayerPrefab lobbyPlayerPrefab = null;
+
+    [Header("Game")]
+    [SerializeField] private GamePlayerPrefab gamePlayerPrefab = null;
+
+    [Header("Scenes")]
     [Scene] [SerializeField] private string menuScene = string.Empty;
 
     public static event System.Action OnClientConnected;
     public static event System.Action OnClientDisconnected;
 
     public List<LobbyPlayerPrefab> LobbyPlayers { get; } = new List<LobbyPlayerPrefab>();
+    public List<GamePlayerPrefab> GamePlayers { get; } = new List<GamePlayerPrefab>();
+
+    // - - - - - - - LOBBY - - - - - - - -
 
     public override void OnStartServer() {
         //spawnPrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList();
@@ -27,12 +36,16 @@ public class LobbyNetworkManager : NetworkManager {
     }
 
     public override void OnClientConnect(NetworkConnection conn) {
+        NotifyPlayersOfReadyState();
+
         base.OnClientConnect(conn);
 
         OnClientConnected?.Invoke();
     }
 
     public override void OnClientDisconnect(NetworkConnection conn) {
+        NotifyPlayersOfReadyState();
+
         base.OnClientDisconnect(conn);
 
         OnClientDisconnected?.Invoke();
@@ -90,10 +103,73 @@ public class LobbyNetworkManager : NetworkManager {
             lobbyPlayerInstance.IsLeader = isLeader;
 
             NetworkServer.AddPlayerForConnection(conn, lobbyPlayerInstance.gameObject);
+
+            NotifyPlayersOfReadyState();
         }
     }
 
     public override void OnStopServer() {
         LobbyPlayers.Clear();
+    }
+
+    // - - - - - - - SERVER NOTIFICATIONS - - - - - - - -
+
+    [SerializeField] private string notificationMessage = string.Empty;
+
+    [ContextMenu("Send Notification")]
+    private void SendNotification() {
+        NetworkServer.SendToAll(new Notification { content = notificationMessage });
+    }
+
+    // - - - - - - - GAME - - - - - - - -
+
+    public void StartGame() {
+        if (SceneManager.GetActiveScene().path == menuScene) {
+            if (!IsReadyToStart()) { return; }
+
+            StopCoroutine("StartGameCoroutine");
+            StartCoroutine("StartGameCoroutine");
+        }
+    }
+
+    private IEnumerator StartGameCoroutine() {
+        int i = 4;
+        string _content = string.Empty;
+        while (i > 0) {
+            if (IsReadyToStart()) {
+                if (i > 1) {
+                    _content = $"Game starts in {(i - 1)}...";
+                } else {
+                    _content = "<color=yellow>Game is about to start...</color>";
+                }
+
+                NetworkServer.SendToAll(new Notification { content = _content });
+                yield return new WaitForSeconds(1);
+                i--;
+            } else {
+                NetworkServer.SendToAll(new Notification { content = "<color=red>Cancelled</color>" });
+                break;
+            }
+        }
+
+        if (IsReadyToStart()) { ServerChangeScene("Scene_Map_01"); }
+    }
+
+    public override void ServerChangeScene(string newSceneName) {
+        // From menu to game
+        if (SceneManager.GetActiveScene().path == menuScene && newSceneName.StartsWith("Scene_Map")) {
+            for (int i = LobbyPlayers.Count - 1; i >= 0; i--) {
+                var conn = LobbyPlayers[i].connectionToClient;
+                var gamePlayerInstance = Instantiate(gamePlayerPrefab);
+                gamePlayerInstance.UserSteamID = LobbyPlayers[i].UserSteamID;
+                Debug.Log($"Check steamID, (not 0?): {LobbyPlayers[i].UserSteamID}");
+
+                NetworkServer.Destroy(conn.identity.gameObject);
+
+                NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject);
+            }
+        }
+
+        base.ServerChangeScene(newSceneName);
     }
 }

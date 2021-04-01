@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour {
 
-    [SerializeField] private JoinLobbyManager joinLobbyManager = null;
+    [SerializeField] private Text errorText = null;
+    [SerializeField] private GameObject loadingText = null;
+
     [System.Serializable]
     public struct MenuHolder {
         public string name;
@@ -32,47 +35,16 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    private void Start() {
-        Screen.fullScreen = false;
-    }
-
-    // Update is called once per frame
-    void Update() {
-
-    }
-
-    public void PlayButtonClicked() {
-        NavigateToMenu("Play Menu");
-    }
-
-    public void OptionsButtonClicked() {
-        NavigateToMenu("Options Menu");
-    }
-
-    public void CreateLobbyButtonClicked() {
-        NavigateToMenu("Create Lobby");
-    }
-
-    public void JoinLobbyButtonClicked() {
-        NavigateToMenu("Join Lobby");
-    }
-
     public void Quit() {
         Application.Quit();
     }
 
-    public void BackButtonClicked() {
-        string currentMenu = menuHolders[currentActiveHolderIndex].name;
-        if (currentMenu == "Create Lobby" || currentMenu == "Join Lobby") {
-            if (currentMenu == "Join Lobby") {
-                joinLobbyManager.ClearErrorMessage();
-            }
-            NavigateToMenu("Play Menu");
-            return;
-        }
+    public void DisplayLoading() {
+        loadingText.SetActive(true);
+    }
 
-        NavigateToMenu("Landing Page");
-
+    public void HideLoading() {
+        loadingText.SetActive(false);
     }
 
     public void NavigateToMenu(string menuName) {
@@ -84,5 +56,10 @@ public class MenuManager : MonoBehaviour {
                 menuHolders[i].holder.SetActive(false);
             }
         }
+    }
+
+    public void NavigateToMenu(string menuName, string errorMessage) {
+        errorText.text = $"Error: {errorMessage}";
+        NavigateToMenu(menuName);
     }
 }
