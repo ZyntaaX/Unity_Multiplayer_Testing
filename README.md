@@ -5,6 +5,9 @@
     Using Mirror for networking (<a href="https://github.com/vis2k/Mirror">Check out</a>).
   </li>
   <li>
+    Using FizzySteamworks as a Unity wrapper for Steamworks (<a href="https://github.com/Chykary/FizzySteamworks">Check out</a>).
+  </li>
+  <li>
     Using ParrelSync for testing (<a href="https://github.com/VeriorPies/ParrelSync">Check out</a>).
   </li>
   <li>
