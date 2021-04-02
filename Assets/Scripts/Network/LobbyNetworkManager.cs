@@ -16,12 +16,14 @@ public class LobbyNetworkManager : NetworkManager {
 
     [Header("Game")]
     [SerializeField] private GamePlayerPrefab gamePlayerPrefab = null;
+    [SerializeField] private GameObject playerSpawnSystem = null;
 
     [Header("Scenes")]
     [Scene] [SerializeField] private string menuScene = string.Empty;
 
     public static event System.Action OnClientConnected;
     public static event System.Action OnClientDisconnected;
+    public static event System.Action<NetworkConnection> OnServerReadied;
 
     public List<LobbyPlayerPrefab> LobbyPlayers { get; } = new List<LobbyPlayerPrefab>();
     public List<GamePlayerPrefab> GamePlayers { get; } = new List<GamePlayerPrefab>();
@@ -171,5 +173,18 @@ public class LobbyNetworkManager : NetworkManager {
         }
 
         base.ServerChangeScene(newSceneName);
+    }
+
+    public override void OnServerSceneChanged(string sceneName) {
+        if (sceneName.StartsWith("Scene_Map")) {
+            GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
+            NetworkServer.Spawn(playerSpawnSystemInstance);
+        }
+    }
+
+    public override void OnServerReady(NetworkConnection conn) {
+        base.OnServerReady(conn);
+
+        OnServerReadied?.Invoke(conn);
     }
 }

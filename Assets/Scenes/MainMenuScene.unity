@@ -2114,9 +2114,12 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 2743859231543418500, guid: 8ecc8e3fa808dd740adbc363724428dd, type: 3}
   - {fileID: 2743859231543418500, guid: fde1b013b18840348af9e0b7e2929438, type: 3}
+  - {fileID: 3279135987757902018, guid: 7062b021bd34b7f489963d353318842c, type: 3}
+  - {fileID: 5295862670755784557, guid: d8701cca582cfb9469443b6610d59356, type: 3}
   minimumPlayers: 1
   lobbyPlayerPrefab: {fileID: 5638597895830302386, guid: 8ecc8e3fa808dd740adbc363724428dd, type: 3}
   gamePlayerPrefab: {fileID: 7999945982503836595, guid: fde1b013b18840348af9e0b7e2929438, type: 3}
+  playerSpawnSystem: {fileID: 5295862670755784557, guid: d8701cca582cfb9469443b6610d59356, type: 3}
   menuScene: Assets/Scenes/MainMenuScene.unity
   notificationMessage: 
 --- !u!114 &1141450117
@@ -3981,7 +3984,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Release 0.0.2_p-a
+  m_Text: Build 0.2.2.1.pr
 --- !u!222 &1988612637
 CanvasRenderer:
   m_ObjectHideFlags: 0
