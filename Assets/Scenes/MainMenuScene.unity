@@ -2055,11 +2055,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1141450115}
   - component: {fileID: 1141450117}
-  - component: {fileID: 1141450116}
   - component: {fileID: 1141450118}
   - component: {fileID: 1141450119}
   - component: {fileID: 1141450121}
   - component: {fileID: 1141450120}
+  - component: {fileID: 1141450116}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged

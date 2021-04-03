@@ -74,6 +74,14 @@ public class LobbyNetworkManager : NetworkManager {
             NotifyPlayersOfReadyState();
         }
 
+
+        //WORKS?
+        /*if (LobbyPlayers.Count < 1) {
+            Shutdown();
+
+            //Start();
+        }*/
+
         base.OnServerDisconnect(conn);
     }
 
