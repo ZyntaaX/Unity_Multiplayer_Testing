@@ -15,6 +15,7 @@ public class PlayerMovementController : NetworkBehaviour {
 
     private Vector2 previousInput;
     private float movementSpeed;
+    private bool isRunning = false;
 
     private Controls controls;
     private Controls Controls {
@@ -38,7 +39,7 @@ public class PlayerMovementController : NetworkBehaviour {
     }
 
     private void SetMovementSpeed(float value) {
-        movementSpeed = value == 1 ? runSpeed : walkSpeed;
+        isRunning = value == 1;
 
         animator.SetBool("isRunning", value == 1);
     }
@@ -55,31 +56,55 @@ public class PlayerMovementController : NetworkBehaviour {
 
     [ClientCallback]
     private void Update() {
+        movementSpeed = isRunning ? runSpeed : walkSpeed;
+        SetAnimationState();
         Move();
     }
 
     [Client]
     private void SetMovement(Vector2 movement) {
-        animator.SetBool("isWalking", true);
         previousInput = movement;
+    }
 
+    [Client]
+    private void ResetAnimationState() {
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isRunning", false);
         animator.SetBool("isStrafeWalkingRight", false);
         animator.SetBool("isStrafeWalkingLeft", false);
+        animator.SetBool("isStrafeRunningRight", false);
+        animator.SetBool("isStrafeRunningLeft", false);
+    }
 
-        if (movement.x > 0) {
-            animator.SetBool("isStrafeWalkingRight", true);
-        } else if (movement.x < 0) {
-            animator.SetBool("isStrafeWalkingLeft", true);
+    [Client]
+    private void SetAnimationState() {
+        ResetAnimationState();
+
+        if (previousInput.y > 0 || previousInput.y < 0) {
+            animator.SetBool("isWalking", true);
+            animator.SetBool("isRunning", isRunning);
+        } 
+
+        if (previousInput.x > 0) {
+            if (isRunning) {
+                animator.SetBool("isStrafeRunningRight", true);
+            } else {
+                animator.SetBool("isStrafeWalkingRight", true);
+            }
+        }
+
+        if (previousInput.x < 0) {
+            if (isRunning) {
+                animator.SetBool("isStrafeRunningLeft", true);
+            } else {
+                animator.SetBool("isStrafeWalkingLeft", true);
+            }
         }
     }
 
     [Client]
     private void ResetMovement() {
         previousInput = Vector2.zero;
-
-        animator.SetBool("isWalking", false);
-        animator.SetBool("isStrafeWalkingRight", false);
-        animator.SetBool("isStrafeWalkingLeft", false);
     }
 
     private void Move() {
