@@ -28,6 +28,12 @@ public class PlayerMovementController : NetworkBehaviour {
 
         Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
         Controls.Player.Move.canceled += ctx => ResetMovement();
+        Controls.Player.Sprint.performed += ctx => SetMovementSpeed(ctx.ReadValue<float>());
+        Controls.Player.Sprint.canceled += ctx => SetMovementSpeed(ctx.ReadValue<float>());
+    }
+
+    private void SetMovementSpeed(float value) {
+        movementSpeed = value == 1 ? runSpeed : walkSpeed;
     }
 
     [ClientCallback]
