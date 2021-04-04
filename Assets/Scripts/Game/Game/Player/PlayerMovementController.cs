@@ -5,10 +5,13 @@ using Mirror;
 
 public class PlayerMovementController : NetworkBehaviour {
 
+    [Header("Settings")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 10f;
 
+    [Header("References")]
     [SerializeField] private CharacterController controller = null;
+    [SerializeField] private Animator animator = null;
 
     private Vector2 previousInput;
     private float movementSpeed;
@@ -24,6 +27,8 @@ public class PlayerMovementController : NetworkBehaviour {
     public override void OnStartAuthority() {
         enabled = true;
 
+        Cursor.visible = false; //RIGHT PLACE?
+
         movementSpeed = walkSpeed;
 
         Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
@@ -34,6 +39,8 @@ public class PlayerMovementController : NetworkBehaviour {
 
     private void SetMovementSpeed(float value) {
         movementSpeed = value == 1 ? runSpeed : walkSpeed;
+
+        animator.SetBool("isRunning", value == 1);
     }
 
     [ClientCallback]
@@ -45,6 +52,7 @@ public class PlayerMovementController : NetworkBehaviour {
     private void OnDisable() {
         Controls.Disable();
     }
+
     [ClientCallback]
     private void Update() {
         Move();
@@ -52,12 +60,26 @@ public class PlayerMovementController : NetworkBehaviour {
 
     [Client]
     private void SetMovement(Vector2 movement) {
+        animator.SetBool("isWalking", true);
         previousInput = movement;
+
+        animator.SetBool("isStrafeWalkingRight", false);
+        animator.SetBool("isStrafeWalkingLeft", false);
+
+        if (movement.x > 0) {
+            animator.SetBool("isStrafeWalkingRight", true);
+        } else if (movement.x < 0) {
+            animator.SetBool("isStrafeWalkingLeft", true);
+        }
     }
 
     [Client]
     private void ResetMovement() {
         previousInput = Vector2.zero;
+
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isStrafeWalkingRight", false);
+        animator.SetBool("isStrafeWalkingLeft", false);
     }
 
     private void Move() {
