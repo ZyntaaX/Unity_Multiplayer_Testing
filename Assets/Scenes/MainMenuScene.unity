@@ -2102,7 +2102,7 @@ MonoBehaviour:
   serverBatchInterval: 0
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 1141450120}
+  transport: {fileID: 1141450117}
   networkAddress: localhost
   maxConnections: 6
   disconnectInactiveConnections: 0
@@ -2114,7 +2114,7 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 2743859231543418500, guid: 8ecc8e3fa808dd740adbc363724428dd, type: 3}
   - {fileID: 2743859231543418500, guid: fde1b013b18840348af9e0b7e2929438, type: 3}
-  - {fileID: 3279135987757902018, guid: 7062b021bd34b7f489963d353318842c, type: 3}
+  - {fileID: 5465901386591655896, guid: 56fe6a66d4e277c4cbcb656bcfb49998, type: 3}
   - {fileID: 5295862670755784557, guid: d8701cca582cfb9469443b6610d59356, type: 3}
   minimumPlayers: 1
   lobbyPlayerPrefab: {fileID: 5638597895830302386, guid: 8ecc8e3fa808dd740adbc363724428dd, type: 3}
@@ -2129,7 +2129,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141450114}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
@@ -2151,7 +2151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141450114}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
@@ -2166,7 +2166,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141450114}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46dd845e7b37dc44b87bc9e7484a123d, type: 3}
   m_Name: 
@@ -2179,7 +2179,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141450114}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea368fb6f27ec2f40a40e20977992b9c, type: 3}
   m_Name: 
@@ -2196,7 +2196,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141450114}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef4bffeda13d7a748973ff9204401c07, type: 3}
   m_Name: 
