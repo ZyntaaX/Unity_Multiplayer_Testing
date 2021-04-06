@@ -41,6 +41,9 @@ public class PlayerMovementController : NetworkBehaviour {
     private void SetMovementSpeed(float value) {
         isRunning = value == 1;
 
+        if (animator.GetBool("isBacking"))
+            isRunning = false;
+            
         animator.SetBool("isRunning", value == 1);
     }
 
@@ -69,6 +72,7 @@ public class PlayerMovementController : NetworkBehaviour {
     [Client]
     private void ResetAnimationState() {
         animator.SetBool("isWalking", false);
+        animator.SetBool("isBacking", false);
         animator.SetBool("isRunning", false);
         animator.SetBool("isStrafeWalkingRight", false);
         animator.SetBool("isStrafeWalkingLeft", false);
@@ -80,10 +84,14 @@ public class PlayerMovementController : NetworkBehaviour {
     private void SetAnimationState() {
         ResetAnimationState();
 
-        if (previousInput.y > 0 || previousInput.y < 0) {
+        if (previousInput.y > 0) {
             animator.SetBool("isWalking", true);
             animator.SetBool("isRunning", isRunning);
-        } 
+        }
+
+        if (previousInput.y < 0) {
+            animator.SetBool("isBacking", true);
+        }
 
         if (previousInput.x > 0) {
             if (isRunning) {
