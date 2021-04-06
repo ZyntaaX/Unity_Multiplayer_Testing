@@ -12,7 +12,6 @@ public class FPSCameraController : NetworkBehaviour {
     [Header("Settings")]
     [SerializeField] private float mouseSensitivity = 100f;
 
-
     // Private
     private float xRotation = 0f;
     private bool menuUp = true; // Starts as true as it will instantly change upon start
@@ -60,7 +59,7 @@ public class FPSCameraController : NetworkBehaviour {
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        xRotation = Mathf.Clamp(xRotation, -90f, 50f);
 
         camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
