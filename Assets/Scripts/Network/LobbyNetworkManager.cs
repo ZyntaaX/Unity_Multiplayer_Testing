@@ -17,6 +17,7 @@ public class LobbyNetworkManager : NetworkManager {
     [Header("Game")]
     [SerializeField] private GamePlayerPrefab gamePlayerPrefab = null;
     [SerializeField] private GameObject playerSpawnSystem = null;
+    [SerializeField] private GameObject roundSystem = null;
 
     [Header("Scenes")]
     [Scene] [SerializeField] private string menuScene = string.Empty;
@@ -24,6 +25,7 @@ public class LobbyNetworkManager : NetworkManager {
     public static event System.Action OnClientConnected;
     public static event System.Action OnClientDisconnected;
     public static event System.Action<NetworkConnection> OnServerReadied;
+    public static event System.Action OnServerStopped;
 
     public List<LobbyPlayerPrefab> LobbyPlayers { get; } = new List<LobbyPlayerPrefab>();
     public List<GamePlayerPrefab> GamePlayers { get; } = new List<GamePlayerPrefab>();
@@ -119,7 +121,10 @@ public class LobbyNetworkManager : NetworkManager {
     }
 
     public override void OnStopServer() {
+        OnServerStopped?.Invoke();
+
         LobbyPlayers.Clear();
+        GamePlayers.Clear();
     }
 
     // - - - - - - - SERVER NOTIFICATIONS - - - - - - - -
@@ -187,6 +192,9 @@ public class LobbyNetworkManager : NetworkManager {
         if (sceneName.StartsWith("Scene_Map")) {
             GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
             NetworkServer.Spawn(playerSpawnSystemInstance);
+
+            GameObject roundSystemInstance = Instantiate(roundSystem);
+            NetworkServer.Spawn(roundSystemInstance);
         }
     }
 

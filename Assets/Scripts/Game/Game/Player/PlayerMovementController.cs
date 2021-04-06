@@ -5,13 +5,18 @@ using Mirror;
 
 public class PlayerMovementController : NetworkBehaviour {
 
+    [Header("Settings")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 10f;
+    [SerializeField] private float backwardsSpeed = 3f;
 
+    [Header("References")]
     [SerializeField] private CharacterController controller = null;
+    [SerializeField] private Animator animator = null;
 
     private Vector2 previousInput;
     private float movementSpeed;
+    private bool isRunning = false;
 
     private Controls controls;
     private Controls Controls {
@@ -24,6 +29,8 @@ public class PlayerMovementController : NetworkBehaviour {
     public override void OnStartAuthority() {
         enabled = true;
 
+        Cursor.visible = false; //RIGHT PLACE?
+
         movementSpeed = walkSpeed;
 
         Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
@@ -33,7 +40,7 @@ public class PlayerMovementController : NetworkBehaviour {
     }
 
     private void SetMovementSpeed(float value) {
-        movementSpeed = value == 1 ? runSpeed : walkSpeed;
+        isRunning = value == 1;
     }
 
     [ClientCallback]
@@ -45,14 +52,55 @@ public class PlayerMovementController : NetworkBehaviour {
     private void OnDisable() {
         Controls.Disable();
     }
+
     [ClientCallback]
     private void Update() {
+        if (!animator.GetBool("isWalkingBackwards"))
+            movementSpeed = animator.GetBool("isRunning") ? runSpeed : walkSpeed;
+        else
+            movementSpeed = backwardsSpeed;
+
+        SetAnimationState();
         Move();
     }
 
     [Client]
     private void SetMovement(Vector2 movement) {
         previousInput = movement;
+    }
+
+    [Client]
+    private void ResetAnimationState() {
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isWalkingBackwards", false);
+        animator.SetBool("isRunning", false);
+        animator.SetBool("isStrafingLeft", false);
+        animator.SetBool("isStrafingRight", false);
+    }
+
+    [Client]
+    private void SetAnimationState() {
+        ResetAnimationState();
+
+        if (previousInput.y > 0) {
+            animator.SetBool("isWalking", true);
+
+            if (isRunning) {
+                animator.SetBool("isRunning", true);
+            }
+        }
+
+        if (previousInput.y < 0) {
+            animator.SetBool("isWalkingBackwards", true);
+        }
+
+        if (previousInput.x > 0) {
+            animator.SetBool("isStrafingRight", true);
+        }
+
+        if (previousInput.x < 0) {
+            animator.SetBool("isStrafingLeft", true);
+        }
     }
 
     [Client]
