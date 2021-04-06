@@ -9,10 +9,13 @@ public class PlayerMovementController : NetworkBehaviour {
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 10f;
     [SerializeField] private float backwardsSpeed = 3f;
+    [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private float gravityValue = 10f;
 
     [Header("References")]
     [SerializeField] private CharacterController controller = null;
     [SerializeField] private Animator animator = null;
+    [SerializeField] private Transform playerTransform = null;
 
     private Vector2 previousInput;
     private float movementSpeed;
@@ -35,8 +38,24 @@ public class PlayerMovementController : NetworkBehaviour {
 
         Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
         Controls.Player.Move.canceled += ctx => ResetMovement();
+
         Controls.Player.Sprint.performed += ctx => SetMovementSpeed(ctx.ReadValue<float>());
         Controls.Player.Sprint.canceled += ctx => SetMovementSpeed(ctx.ReadValue<float>());
+
+        Controls.Player.Jump.performed += ctx => PerformJump();
+    }
+
+    private void PerformJump() {
+        Debug.Log("Jumping");
+    /*
+        Vector3 movement = new Vector3();
+        
+        movement.y += Mathf.Sqrt(jumpForce * -3.0f * gravityValue);
+        
+
+        movement.y += gravityValue * Time.deltaTime;
+        controller.Move(movement * Time.deltaTime);
+        */
     }
 
     private void SetMovementSpeed(float value) {
@@ -52,6 +71,8 @@ public class PlayerMovementController : NetworkBehaviour {
     private void OnDisable() {
         Controls.Disable();
     }
+
+
 
     [ClientCallback]
     private void Update() {
