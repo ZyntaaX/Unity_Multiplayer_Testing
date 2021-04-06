@@ -8,6 +8,7 @@ public class PlayerMovementController : NetworkBehaviour {
     [Header("Settings")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 10f;
+    [SerializeField] private float backwardsSpeed = 3f;
 
     [Header("References")]
     [SerializeField] private CharacterController controller = null;
@@ -40,11 +41,6 @@ public class PlayerMovementController : NetworkBehaviour {
 
     private void SetMovementSpeed(float value) {
         isRunning = value == 1;
-
-        if (animator.GetBool("isBacking"))
-            isRunning = false;
-            
-        animator.SetBool("isRunning", value == 1);
     }
 
     [ClientCallback]
@@ -59,7 +55,11 @@ public class PlayerMovementController : NetworkBehaviour {
 
     [ClientCallback]
     private void Update() {
-        movementSpeed = isRunning ? runSpeed : walkSpeed;
+        if (!animator.GetBool("isWalkingBackwards"))
+            movementSpeed = animator.GetBool("isRunning") ? runSpeed : walkSpeed;
+        else
+            movementSpeed = backwardsSpeed;
+
         SetAnimationState();
         Move();
     }
@@ -72,12 +72,10 @@ public class PlayerMovementController : NetworkBehaviour {
     [Client]
     private void ResetAnimationState() {
         animator.SetBool("isWalking", false);
-        animator.SetBool("isBacking", false);
+        animator.SetBool("isWalkingBackwards", false);
         animator.SetBool("isRunning", false);
-        animator.SetBool("isStrafeWalkingRight", false);
-        animator.SetBool("isStrafeWalkingLeft", false);
-        animator.SetBool("isStrafeRunningRight", false);
-        animator.SetBool("isStrafeRunningLeft", false);
+        animator.SetBool("isStrafingLeft", false);
+        animator.SetBool("isStrafingRight", false);
     }
 
     [Client]
@@ -86,27 +84,22 @@ public class PlayerMovementController : NetworkBehaviour {
 
         if (previousInput.y > 0) {
             animator.SetBool("isWalking", true);
-            animator.SetBool("isRunning", isRunning);
+
+            if (isRunning) {
+                animator.SetBool("isRunning", true);
+            }
         }
 
         if (previousInput.y < 0) {
-            animator.SetBool("isBacking", true);
+            animator.SetBool("isWalkingBackwards", true);
         }
 
         if (previousInput.x > 0) {
-            if (isRunning) {
-                animator.SetBool("isStrafeRunningRight", true);
-            } else {
-                animator.SetBool("isStrafeWalkingRight", true);
-            }
+            animator.SetBool("isStrafingRight", true);
         }
 
         if (previousInput.x < 0) {
-            if (isRunning) {
-                animator.SetBool("isStrafeRunningLeft", true);
-            } else {
-                animator.SetBool("isStrafeWalkingLeft", true);
-            }
+            animator.SetBool("isStrafingLeft", true);
         }
     }
 
